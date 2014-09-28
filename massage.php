@@ -1,8 +1,10 @@
+
 <?php
  $mysqli = new mysqli("127.0.0.1", "root", "root", "kidmob", 8889);
 if ($mysqli->connect_errno) {
     echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 } else {
+	
 	echo $mysqli->host_info . "\n";
 	$xml = simplexml_load_file('survey.xml');
 	$page = $xml->page;
@@ -11,6 +13,7 @@ if ($mysqli->connect_errno) {
 	foreach ($questions as $qNo => $ques) {
 		$qText = $ques->qText;
 		$qid =  $ques->attributes()[1];
+
 		if($ques->attributes()[0] == 200){
 			echo "free Text \n";
 			$responseArr = [];
@@ -37,11 +40,15 @@ if ($mysqli->connect_errno) {
 				//print_r($key);
 				foreach ($res as $key => $options) {
 					foreach ($options as $key => $option) {
-					    array_push($responseArr, (string)$option->option);
+						//echo (string)$option->option;
+						foreach ($option as $optkey => $optVal) {
+							array_push($responseArr, (string)$optVal);
+						}
 					}					
 				}
 			}
 			$responseArr = array_filter($responseArr);
+
 			$responseArr = array_count_values($responseArr);
 			//print_r($responseArr);
 			foreach ($responseArr as $key => $value) {
@@ -51,16 +58,8 @@ if ($mysqli->connect_errno) {
 			}
 		}
 	}
-
+	
 }
 
-//echo $page->question[0]->attributes();
-//$json_string = json_encode($page);
-    
-//$result_array = json_decode($json_string, TRUE);
-
-//print_r($result_array[question][0][attributes]);
-
-//print_r($result_array);
-
 ?>
+
